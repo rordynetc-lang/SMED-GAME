@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="uk" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMED Turbo Trainer | Інтерактивний Курс та Симулятор</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        .step-active {
+            border-color: #3b82f6 !important;
+            background-color: #1e293b !important;
+            box-shadow: 0 0 15px -3px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-full flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('learn')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">SMED Turbo</span>
+                    <span class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-semibold border border-slate-700">Lean Sim</span>
+                </div>
+            </div>
+
+            <!-- Nav Tabs -->
+            <nav class="flex items-center space-x-1 sm:space-x-2">
+                <button id="nav-learn" onclick="switchTab('learn')" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 bg-blue-600 text-white shadow-md shadow-blue-600/30">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span class="hidden md:inline">1. Навчання</span>
+                </button>
+                <button id="nav-game" onclick="switchTab('game')" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span class="hidden md:inline">2. Тренажер</span>
+                </button>
+                <button id="nav-apply" onclick="switchTab('apply')" class="px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span class="hidden md:inline">3. Заявка</span>
+                </button>
+                <button id="sound-btn" onclick="toggleSound()" class="p-2 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors ml-2" title="Увімкнути/вимкнути звук кліків">
+                    <i class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+        <!-- ================= VIEW 1: SMED VISUAL GUIDE ================= -->
+        <section id="section-learn" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 border border-slate-800 p-6 sm:p-10">
+                <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-4">
+                        <i class="fa-solid fa-fire text-amber-400"></i> Інтерактивна методологія Lean
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+                        Як змінювати деталі зі швидкістю <span class="bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">Формули-1</span>?
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+                        <strong class="text-white">SMED</strong> (Single-Minute Exchange of Die) — це супер-техніка провідних компаній світу, яка скорочує час переналагодження обладнання з 1 години до <strong class="text-emerald-400">менше ніж 10 хвилин</strong>!
+                    </p>
+                    <button onclick="switchTab('game')" class="inline-flex items-center gap-3 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-blue-600/30 transition-all hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-play"></i> Запустити Тренажер
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visual Analogies Grid -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Analogy 1 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all group">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-flag-checkered"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-white">🏎️ Піт-стоп у Формулі-1</h3>
+                            <p class="text-xs text-slate-400">Від хвилини до миті</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        У 1950 році заміна коліс тривала <span class="text-red-400 font-bold">понад 60 секунд</span>. Зараз рекорд становить <span class="text-emerald-400 font-bold">1.8 секунди</span>!
+                    </p>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs text-slate-400">
+                        <strong class="text-slate-200">Секрет:</strong> Механіки не бігають у 30 разів швидше. Вони просто підготували всі інструменти та колеса ще ДО зупинки боліда.
+                    </div>
+                </div>
+
+                <!-- Analogy 2 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-all group">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-gamepad"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-white">🎮 Геймерський Сетап</h3>
+                            <p class="text-xs text-slate-400">Заміна консолі під час марафону</p>
+                        </div>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Якщо шукати кабелі під ліжком під час гри — ти втратиш <span class="text-red-400 font-bold">20 хвилин катки</span>.
+                    </p>
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-xs text-slate-400">
+                        <strong class="text-slate-200">Секрет:</strong> Поклади нові шнури та геймпад на стіл заздалегідь — заміна займе <span class="text-emerald-400 font-bold">15 секунд</span>!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Concept: Internal vs External -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-cyan-400"></i> Головний секрет SMED: 2 типи дій
+                </h2>
+                <p class="text-slate-400 text-sm mb-6">Усі дії під час заміни чи переналагодження чітко розділяються на дві категорії:</p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-slate-950 border-2 border-red-500/30 rounded-xl p-5 relative overflow-hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></span>
+                            <h3 class="font-extrabold text-red-400 text-lg">🔴 Внутрішні дії (Internal)</h3>
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-2">
+                            Робляться <strong>ТІЛЬКИ коли верстат повністю зупинено</strong>.
+                        </p>
+                        <p class="text-xs text-slate-500">Приклад: зняти гарячу прес-форму, встановити новий ножичний блок.</p>
+                    </div>
+
+                    <div class="bg-slate-950 border-2 border-emerald-500/30 rounded-xl p-5 relative overflow-hidden">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <h3 class="font-extrabold text-emerald-400 text-lg">🟢 Зовнішні дії (External)</h3>
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-2">
+                            Робляться <strong>ПОКИ верстат ще працює</strong> (до зупинки або після запуску).
+                        </p>
+                        <p class="text-xs text-slate-500">Приклад: принести нову деталь зі складу, підготувати ключі, заповнити документи.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Before / After Interactive Timeline Comparison -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i> Графічне порівняння: До та Після SMED
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-1">Наочна оптимізація часової шкали простіїв</p>
+                    </div>
+                    <span class="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold w-fit">
+                        🚀 Економія часу: > 80%
+                    </span>
+                </div>
+
+                <div class="space-y-4 bg-slate-950 p-5 rounded-xl border border-slate-800">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-red-400 mb-1.5">
+                            <span>ДО SMED (Загальний простій: 60 хвилин)</span>
+                            <span>Хаотичне переналагодження</span>
+                        </div>
+                        <div class="flex h-10 rounded-lg overflow-hidden font-bold text-xs">
+                            <div class="bg-red-600 text-white flex items-center justify-center p-2 text-center w-3/4 truncate">
+                                🔴 Пошук інструментів & відкручування (45 хв)
+                            </div>
+                            <div class="bg-amber-600 text-white flex items-center justify-center p-2 text-center w-1/4 truncate">
+                                Налаштування (15 хв)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center my-2 text-blue-400 text-sm font-bold">
+                        <i class="fa-solid fa-arrow-down-long animate-bounce"></i>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-bold text-emerald-400 mb-1.5">
+                            <span>ПІСЛЯ SMED (Простій верстата: Всього 9 хвилин!)</span>
+                            <span class="text-emerald-400 font-extrabold">+ 51 хв корисної роботи!</span>
+                        </div>
+                        <div class="flex h-10 rounded-lg overflow-hidden font-bold text-xs">
+                            <div class="bg-emerald-600 text-white flex items-center justify-center p-2 text-center w-2/6 truncate">
+                                🟢 Підготовка (ЗОВНІ)
+                            </div>
+                            <div class="bg-red-500 text-white flex items-center justify-center p-2 text-center w-1/6 truncate">
+                                🔴 Заміна (9 хв)
+                            </div>
+                            <div class="bg-emerald-600 text-white flex items-center justify-center p-2 text-center w-3/6 truncate">
+                                🟢 Прибирання та змащення (ЗОВНІ)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive 7 Steps Module -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-blue-400"></i> Інтерактивні 7 кроків SMED
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-1">Клацніть на будь-який крок для детального перегляду</p>
+                    </div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold">
+                        <i class="fa-solid fa-star text-amber-400"></i> Виділено 4 фундаментальні кроки
+                    </div>
+                </div>
+
+                <!-- Step Navigator Horizontal -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 mb-6">
+                    <button onclick="selectStep(1)" id="step-btn-1" class="step-btn p-3 rounded-xl border border-slate-800 bg-slate-950/60 text-left transition-all hover:border-slate-700">
+                        <div class="text-xs text-slate-500 font-bold mb-1">01</div>
+                        <div class="text-xs font-bold text-slate-300 truncate">Відеозапис</div>
+                    </button>
+                    <button onclick="selectStep(2)" id="step-btn-2" class="step-btn p-3 rounded-xl border-2 border-blue-500/80 bg-blue-950/30 text-left transition-all hover:border-blue-400">
+                        <div class="flex items-center justify-between text-xs text-blue-400 font-bold mb-1">
+                            <span>02</span>
+                            <span class="text-[10px] bg-blue-500 text-white px-1.5 py-0.2 rounded font-black">★ 1</span>
+                        </div>
+                        <div class="text-xs font-extrabold text-blue-300 truncate">1. Розділення</div>
+                    </button>
+                    <button onclick="selectStep(3)" id="step-btn-3" class="step-btn p-3 rounded-xl border-2 border-blue-500/80 bg-blue-950/30 text-left transition-all hover:border-blue-400">
+                        <div class="flex items-center justify-between text-xs text-blue-400 font-bold mb-1">
+                            <span>03</span>
+                            <span class="text-[10px] bg-blue-500 text-white px-1.5 py-0.2 rounded font-black">★ 2</span>
+                        </div>
+                        <div class="text-xs font-extrabold text-blue-300 truncate">2. Перетворення</div>
+                    </button>
+                    <button onclick="selectStep(4)" id="step-btn-4" class="step-btn p-3 rounded-xl border-2 border-blue-500/80 bg-blue-950/30 text-left transition-all hover:border-blue-400">
+                        <div class="flex items-center justify-between text-xs text-blue-400 font-bold mb-1">
+                            <span>04</span>
+                            <span class="text-[10px] bg-blue-500 text-white px-1.5 py-0.2 rounded font-black">★ 3</span>
+                        </div>
+                        <div class="text-xs font-extrabold text-blue-300 truncate">3. Оптимізація</div>
+                    </button>
+                    <button onclick="selectStep(5)" id="step-btn-5" class="step-btn p-3 rounded-xl border border-slate-800 bg-slate-950/60 text-left transition-all hover:border-slate-700">
+                        <div class="text-xs text-slate-500 font-bold mb-1">05</div>
+                        <div class="text-xs font-bold text-slate-300 truncate">5S Порядок</div>
+                    </button>
+                    <button onclick="selectStep(6)" id="step-btn-6" class="step-btn p-3 rounded-xl border-2 border-blue-500/80 bg-blue-950/30 text-left transition-all hover:border-blue-400">
+                        <div class="flex items-center justify-between text-xs text-blue-400 font-bold mb-1">
+                            <span>06</span>
+                            <span class="text-[10px] bg-blue-500 text-white px-1.5 py-0.2 rounded font-black">★ 4</span>
+                        </div>
+                        <div class="text-xs font-extrabold text-blue-300 truncate">4. Стандарт</div>
+                    </button>
+                    <button onclick="selectStep(7)" id="step-btn-7" class="step-btn p-3 rounded-xl border border-slate-800 bg-slate-950/60 text-left transition-all hover:border-slate-700">
+                        <div class="text-xs text-slate-500 font-bold mb-1">07</div>
+                        <div class="text-xs font-bold text-slate-300 truncate">Тренування</div>
+                    </button>
+                </div>
+
+                <!-- Dynamic Step Details Card -->
+                <div id="step-details-card" class="bg-slate-950 border border-slate-800 rounded-xl p-6 transition-all min-h-[160px] flex flex-col justify-center">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 2: INTERACTIVE SIMULATOR ================= -->
+        <section id="section-game" class="space-y-6 hidden">
+            <!-- Game Header -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2 inline-block">
+                        <i class="fa-solid fa-gamepad"></i> Симулятор переналагодження
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Операція «Формула-1 в цеху №1»</h2>
+                    <p class="text-slate-400 text-sm mt-1 max-w-xl">Ваша мета: скоротити час простою верстата з <strong class="text-red-400">45 хвилин</strong> до <strong class="text-emerald-400">5 хвилин</strong>!</p>
+                </div>
+
+                <!-- Timer / Efficiency Score Card -->
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center gap-6 w-full md:w-auto justify-around">
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500 font-semibold mb-1">Час простою</div>
+                        <div id="sim-time-display" class="text-2xl sm:text-3xl font-black text-red-400">45 хв</div>
+                    </div>
+                    <div class="w-px h-10 bg-slate-800"></div>
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500 font-semibold mb-1">Скорочення</div>
+                        <div id="sim-saving-display" class="text-2xl sm:text-3xl font-black text-emerald-400">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Progress Bar -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                <div class="flex justify-between items-center text-xs font-bold text-slate-400 mb-2">
+                    <span id="game-stage-label">Етап 1: Класифікація дій (0/5)</span>
+                    <span id="game-completion-pct">0% виконано</span>
+                </div>
+                <div class="w-full h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
+                    <div id="game-progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 w-0 transition-all duration-500"></div>
+                </div>
+            </div>
+
+            <!-- Game Stage Container -->
+            <div id="game-content-area" class="space-y-6">
+                <!-- Task Cards dynamically inserted -->
+            </div>
+        </section>
+
+        <!-- ================= VIEW 3: APPLICATION FORM ================= -->
+        <section id="section-apply" class="space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8">
+                <div class="max-w-3xl">
+                    <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2 inline-block">
+                        <i class="fa-solid fa-paper-plane"></i> Фінальний крок
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Заявка на курс SMED</h2>
+                    <p class="text-slate-400 text-sm mt-1">
+                        Дайте відповіді на два підпункти та заповніть ваші дані, щоб згенерувати підсумкову картку кандидата.
+                    </p>
+                </div>
+
+                <form id="smed-form" onsubmit="generateCertificate(event)" class="mt-8 space-y-6">
+
+                    <!-- Sub-section 1 -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 sm:p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                            <h3 class="font-extrabold text-white text-base sm:text-lg flex items-center gap-2.5">
+                                <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">1</span>
+                                1. Чому ви хочете дізнатися більше про SMED?
+                            </h3>
+                            <span class="text-xs text-amber-400 font-bold bg-amber-400/10 px-2.5 py-1 rounded border border-amber-400/20 w-fit">
+                                Виберіть готову підказку :
+                            </span>
+                        </div>
+
+                        <!-- Clickable Hint Chips -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-2">
+                                <i class="fa-solid fa-hand-pointer text-amber-400"></i> Натисніть на варіант, щоб додати його в полі нижче:
+                            </label>
+                            <div class="flex flex-wrap gap-2">
+                                <button type="button" onclick="fillReflection('Хочу навчитися скорочувати час переналагодження та зменшити простій обладнання.')" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-blue-500 text-xs text-slate-300 transition-all text-left flex items-center gap-2">
+                                    <i class="fa-solid fa-plus text-blue-400 text-[10px]"></i>
+                                    <span>Хочу навчитися скорочувати час переналагодження та зменшити простій обладнання.</span>
+                                </button>
+                                <button type="button" onclick="fillReflection('Прагну усунути втрати часу та впровадити стандарти Lean на своєму робочому місці.')" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-blue-500 text-xs text-slate-300 transition-all text-left flex items-center gap-2">
+                                    <i class="fa-solid fa-plus text-blue-400 text-[10px]"></i>
+                                    <span>Прагну усунути втрати часу та впровадити стандарти Lean на своєму робочому місці.</span>
+                                </button>
+                                <button type="button" onclick="fillReflection('Бажаю оптимізувати процеси у своєму підрозділі за принципами Формули-1.')" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-blue-500 text-xs text-slate-300 transition-all text-left flex items-center gap-2">
+                                    <i class="fa-solid fa-plus text-blue-400 text-[10px]"></i>
+                                    <span>Бажаю оптимізувати процеси у своєму підрозділі за принципами Формули-1.</span>
+                                </button>
+                                <button type="button" onclick="fillReflection('Хочу підвищити власну ефективність і допомогти команді досягати кращих KPI.')" class="px-3 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-blue-500 text-xs text-slate-300 transition-all text-left flex items-center gap-2">
+                                    <i class="fa-solid fa-plus text-blue-400 text-[10px]"></i>
+                                    <span>Хочу підвищити власну ефективність і допомогти команді досягати кращих KPI.</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <textarea id="form-reflection-1" required rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition-colors custom-scrollbar" placeholder="Виберіть підказку вище або введіть свій варіант..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Sub-section 2 -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 sm:p-6 space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                            <h3 class="font-extrabold text-white text-base sm:text-lg flex items-center gap-2.5">
+                                <span class="w-7 h-7 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">2</span>
+                                2. Чому саме ви повинні бути учасником навчання по SMED?
+                            </h3>
+                            <span class="text-xs text-emerald-400 font-bold bg-emerald-400/10 px-2.5 py-1 rounded border border-emerald-400/20 w-fit">
+                                Напишіть власний роздум :
+                            </span>
+                        </div>
+
+                        <p class="text-xs text-slate-400">
+                            Опишіть вашу особисту мотивацію, конкретне вузьке місце у процесі та як саме ви плануєте втілити знання на практиці:
+                        </p>
+
+                        <div>
+                            <textarea id="form-reflection-2" required rows="4" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500 transition-colors custom-scrollbar" placeholder="Введіть власний роздум... (наприклад: чому саме ви маєте потрапити в групу, яку проблему на своїй ділянці хочете вирішити та який це дасть результат)"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Section B: Candidate Profile & Practical Case -->
+                    <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 sm:p-6 space-y-4">
+                        <h3 class="font-bold text-white text-base flex items-center gap-2">
+                            <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs flex items-center justify-center font-black">3</span>
+                            Паспорт кандидата та практичний проєкт
+                        </h3>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">ПІБ учасника *</label>
+                                <input type="text" id="form-name" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500" placeholder="Олександр Коваль">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-400 mb-1">Посада / Підрозділ / Навчальна група *</label>
+                                <input type="text" id="form-dept" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500" placeholder="Оператор лінії / Цех №1">
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Мій практичний кейс (де саме можна скоротити час переналагодження):</label>
+                                <input type="text" id="form-case" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500" placeholder="Заміна прес-форми на штампувальному верстаті №3">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Очікуваний результат (вплив на показники підрозділу):</label>
+                                <input type="text" id="form-impact" required class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500" placeholder="Скорочення часу простою з 45 хв до 10 хв, додатково +400 деталей у зміну">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">Готовність діяти (термін реалізації власного SMED-проєкту):</label>
+                                <select id="form-days" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+                                    <option value="14 днів">Протягом 14 днів після завершення курсу</option>
+                                    <option value="30 днів">Протягом 30 днів після завершення курсу</option>
+                                    <option value="60 днів">Протягом 60 днів після завершення курсу</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-base shadow-xl shadow-emerald-600/20 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-award text-lg"></i> Згенерувати підсумкову картку заявки
+                    </button>
+                </form>
+
+                <!-- Certificate Result Card -->
+                <div id="certificate-result" class="hidden mt-8 border-2 border-dashed border-emerald-500/50 bg-slate-950 rounded-2xl p-6 sm:p-8 space-y-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-wider">Офіційна Заявка</span>
+                            <h3 class="text-2xl font-black text-white mt-1">Заявка кандидата на навчання зі SMED</h3>
+                        </div>
+                        <div class="text-emerald-400 text-3xl">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                    </div>
+
+                    <div id="certificate-body" class="bg-slate-900 rounded-xl p-5 border border-slate-800 space-y-4 text-sm">
+                        <!-- Dynamic Certificate Data -->
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="copyCertificate()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-copy"></i> Скопіювати текст
+                        </button>
+                        <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> Роздрукувати / Зберегти в PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- App JavaScript Logic -->
+    <script>
+        // Audio State
+        let soundEnabled = true;
+
+        // Snappy Mechanical Click Sound (Web Audio API)
+        function playClickSound(type = 'click') {
+            if (!soundEnabled) return;
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const audioCtx = new AudioContext();
+
+                if (type === 'click') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(80, audioCtx.currentTime + 0.03);
+
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.03);
+                } else if (type === 'success') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.1);
+                } else if (type === 'error') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.08);
+
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                }
+            } catch (e) {
+                // Audio context policy fallback
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('sound-btn');
+            btn.innerHTML = soundEnabled ? '<i class="fa-solid fa-volume-high text-sm"></i>' : '<i class="fa-solid fa-volume-xmark text-sm text-red-400"></i>';
+            if (soundEnabled) playClickSound('click');
+        }
+
+        // Navigation Controller
+        function switchTab(tab) {
+            playClickSound('click');
+            ['learn', 'game', 'apply'].forEach(t => {
+                document.getElementById(`section-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-slate-200 hover:bg-slate-800";
+            });
+
+            document.getElementById(`section-${tab}`).classList.remove('hidden');
+            document.getElementById(`nav-${tab}`).className = "px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all flex items-center space-x-2 bg-blue-600 text-white shadow-md shadow-blue-600/30";
+        }
+
+        // 7 Steps Interactive Data
+        const smedSteps = {
+            1: {
+                title: "01. Відеофіксація та хронометраж",
+                badge: "Підготовка",
+                desc: "Весь процес переналагодження знімається на відео без втручання. Вимірюється точний час кожної секунди дій.",
+                tip: "💡 Знімайте реальний поточний стан — не намагайтеся працювати штучно швидше під камери!"
+            },
+            2: {
+                title: "02. Розділення дій (Internal vs External) ⭐",
+                badge: "ОСНОВНИЙ КРОК 1",
+                desc: "Найважливіший крок! Чітко розділити дії на внутрішні (🔴 Тільки при зупиненому верстаті) та зовнішні (🟢 Можна зробити заздалегідь).",
+                tip: "🔴 Зупинка верстата | 🟢 Верстат працює і випускає продукцію"
+            },
+            3: {
+                title: "03. Перетворення внутрішніх дій на зовнішні ⭐",
+                badge: "ОСНОВНИЙ КРОК 2",
+                desc: "Перенести все, що можливо, на час ДО натискання кнопки «Стоп». Заздалегідь підготувати та підігріти інструменти, принести деталі зі складу.",
+                tip: "🚀 Будь-яка дія, перенесена в «зовнішній» час, скорочує простій обладнання!"
+            },
+            4: {
+                title: "04. ОПТИМІЗАЦІЯ дій (Quick-Release) ⭐",
+                badge: "ОСНОВНИЙ КРОК 3",
+                desc: "Спрощення та прискорення дій, що залишилися внутрішніми. Заміна довгих болтів на затискачі, важелі, безінструментальну заміну.",
+                tip: "🔧 Замість 20 обертів гайковим ключем — один клац затискача!"
+            },
+            5: {
+                title: "05. Організація 5S та раціоналізація",
+                badge: "Порядок",
+                desc: "Створення спеціальних візків для переналагодження. Кожен інструмент має чітке підписане місце на відстані простягнутої руки.",
+                tip: "📦 Жодної секунди на пошуки інструменту чи деталей!"
+            },
+            6: {
+                title: "06. Стандартизація нового процесу ⭐",
+                badge: "ОСНОВНИЙ КРОК 4",
+                desc: "Фіксація оновленого алгоритму в СОП (Стандартну Операційну Процедуру) та створення наочних візуальних чек-листів.",
+                tip: "📜 Щоб кожен оператор у будь-яку зміну виконував заміну однаково швидко."
+            },
+            7: {
+                title: "07. Тренування та Kaizen-аудит",
+                badge: "Вдосконалення",
+                desc: "Регулярні тренування команди операторів та налагоджувальників, як у піт-стоп бригади Формули-1.",
+                tip: "🎯 SMED — це не разовий проєкт, а постійна звичка!"
+            }
+        };
+
+        function selectStep(stepNum) {
+            playClickSound('click');
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.classList.remove('step-active');
+            });
+            document.getElementById(`step-btn-${stepNum}`).classList.add('step-active');
+
+            const data = smedSteps[stepNum];
+            const isCore = [2, 3, 4, 6].includes(stepNum);
+
+            document.getElementById('step-details-card').innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold px-2.5 py-1 rounded ${isCore ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-slate-800 text-slate-400'}">
+                        ${data.badge}
+                    </span>
+                    <span class="text-xs text-slate-500">Крок ${stepNum} з 7</span>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">${data.title}</h3>
+                <p class="text-sm text-slate-300 leading-relaxed mb-3">${data.desc}</p>
+                <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 text-xs text-amber-300/90 font-medium">
+                    ${data.tip}
+                </div>
+            `;
+        }
+
+        // ================= GAME SIMULATOR LOGIC =================
+        const gameTasks = [
+            { id: 1, text: "Пошук інструментів та ключів у сусідньому цеху", time: 8, correct: "external", opt: "Принести ключі на візку ДО зупинки верстата" },
+            { id: 2, text: "Зняття старої прес-форми (відкручування 12 болтів)", time: 10, correct: "internal", opt: "Замінити 12 болтів на швидкі затискачі Quick-Release" },
+            { id: 3, text: "Пошук нової форми на складі та її транспортування", time: 15, correct: "external", opt: "Доставити форму до верстата за 10 хв до зупинки" },
+            { id: 4, text: "Встановлення нової форми та затягування кріплень", time: 7, correct: "internal", opt: "Використати пневмозатискач за 30 секунд" },
+            { id: 5, text: "Принесення інструкції та виклик техніка для налаштування", time: 5, correct: "external", opt: "Тримати інструкцію на стенді поруч з верстатом" }
+        ];
+
+        let gameState = {
+            currentStepIndex: 0,
+            classified: {},
+            totalTime: 45,
+            savedTime: 0
+        };
+
+        function renderGameStage() {
+            const area = document.getElementById('game-content-area');
+            const total = gameTasks.length;
+            const currentTask = gameTasks[gameState.currentStepIndex];
+
+            // Progress Update
+            const pct = Math.round((gameState.currentStepIndex / total) * 100);
+            document.getElementById('game-progress-bar').style.width = `${pct}%`;
+            document.getElementById('game-completion-pct').innerText = `${pct}% виконано`;
+            document.getElementById('game-stage-label').innerText = `Крок ${gameState.currentStepIndex + 1} з ${total}: Класифікація дії`;
+
+            if (gameState.currentStepIndex < total) {
+                area.innerHTML = `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400">Завдання №${currentTask.id}</span>
+                            <span class="px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold">
+                                ⏱️ Займає: ${currentTask.time} хвилин
+                            </span>
+                        </div>
+
+                        <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 text-center">
+                            <h3 class="text-lg sm:text-xl font-bold text-white mb-2">«${currentTask.text}»</h3>
+                            <p class="text-xs text-slate-400">До якої категорії належить ця дія під час переналагодження?</p>
+                        </div>
+
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <button onclick="answerClassification('internal')" class="p-5 rounded-xl border-2 border-red-500/30 bg-red-950/20 hover:bg-red-950/40 hover:border-red-500 text-left transition-all group">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-sm">🔴</div>
+                                    <span class="font-extrabold text-white text-base">Внутрішня (Internal)</span>
+                                </div>
+                                <p class="text-xs text-slate-400">Виконується <strong>ТІЛЬКИ при зупиненому верстаті</strong>.</p>
+                            </button>
+
+                            <button onclick="answerClassification('external')" class="p-5 rounded-xl border-2 border-emerald-500/30 bg-emerald-950/20 hover:bg-emerald-950/40 hover:border-emerald-500 text-left transition-all group">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="w-8 h-8 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">🟢</div>
+                                    <span class="font-extrabold text-white text-base">Зовнішня (External)</span>
+                                </div>
+                                <p class="text-xs text-slate-400">Можна виконати <strong>ДО зупинки або ПІСЛЯ запуску</strong>.</p>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                renderOptimizationStage();
+            }
+        }
+
+        function answerClassification(type) {
+            const task = gameTasks[gameState.currentStepIndex];
+            if (type === task.correct) {
+                playClickSound('success');
+            } else {
+                playClickSound('error');
+            }
+            gameState.classified[task.id] = type;
+            gameState.currentStepIndex++;
+            renderGameStage();
+        }
+
+        function renderOptimizationStage() {
+            document.getElementById('game-stage-label').innerText = `Фінальний Етап: Оптимізація та SMED-Спрощення`;
+            document.getElementById('game-progress-bar').style.width = `100%`;
+            document.getElementById('game-completion-pct').innerText = `100% Класифіковано`;
+
+            const area = document.getElementById('game-content-area');
+            area.innerHTML = `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6">
+                    <div class="text-center max-w-xl mx-auto">
+                        <span class="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-wider mb-2 inline-block">
+                            🚀 Перетворення та Спрощення
+                        </span>
+                        <h3 class="text-2xl font-extrabold text-white">Застосуйте інструменти SMED</h3>
+                        <p class="text-xs text-slate-400 mt-1">Натискайте кнопки перетворення, щоб прибрати простій верстата!</p>
+                    </div>
+
+                    <div class="space-y-3" id="optimization-list">
+                        ${gameTasks.map(task => `
+                            <div id="opt-item-${task.id}" class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-7 h-7 rounded-full ${task.correct === 'internal' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'} flex items-center justify-center text-xs font-bold">
+                                        ${task.correct === 'internal' ? '🔴' : '🟢'}
+                                    </span>
+                                    <div>
+                                        <div class="text-sm font-bold text-white">${task.text}</div>
+                                        <div class="text-xs text-slate-500">Поточний час: ${task.time} хв</div>
+                                    </div>
+                                </div>
+                                <button onclick="applySMEDOptimization(${task.id})" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Оптимізувати
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div id="game-finish-banner" class="hidden bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-6 text-center space-y-3">
+                        <div class="text-emerald-400 text-4xl">🎉</div>
+                        <h4 class="text-xl font-extrabold text-white">Вітаємо! Переналагодження скорочено до 5 хвилин!</h4>
+                        <p class="text-xs text-slate-300 max-w-lg mx-auto">
+                            Ви повністю перенесли зовнішні дії на час роботи верстата та оптимізували кріплення. Час простою зменшено на <strong class="text-emerald-400">88%</strong>!
+                        </p>
+                        <button onclick="switchTab('apply')" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all">
+                            Заповнити заявку на курс SMED <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        let optimizedCount = 0;
+        function applySMEDOptimization(taskId) {
+            playClickSound('success');
+            const task = gameTasks.find(t => t.id === taskId);
+            const item = document.getElementById(`opt-item-${taskId}`);
+
+            item.className = "bg-emerald-950/20 border border-emerald-500/40 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all";
+            item.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="w-7 h-7 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xs font-black">
+                        ✓
+                    </span>
+                    <div>
+                        <div class="text-sm font-bold text-emerald-300 line-through opacity-75">${task.text}</div>
+                        <div class="text-xs text-emerald-400 font-semibold">✨ ${task.opt}</div>
+                    </div>
+                </div>
+                <span class="text-xs font-extrabold px-3 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                    Зменшено!
+                </span>
+            `;
+
+            optimizedCount++;
+            gameState.totalTime -= (task.time - (task.correct === 'internal' ? 2 : 0));
+            if (gameState.totalTime < 5) gameState.totalTime = 5;
+
+            const timeDisp = document.getElementById('sim-time-display');
+            const savingDisp = document.getElementById('sim-saving-display');
+
+            timeDisp.innerText = `${gameState.totalTime} хв`;
+            const savedPct = Math.round(((45 - gameState.totalTime) / 45) * 100);
+            savingDisp.innerText = `${savedPct}%`;
+
+            if (optimizedCount === gameTasks.length) {
+                playClickSound('success');
+                document.getElementById('game-finish-banner').classList.remove('hidden');
+            }
+        }
+
+        // ================= FORM & CERTIFICATE GENERATOR =================
+        function fillReflection(text) {
+            playClickSound('click');
+            const field = document.getElementById('form-reflection-1');
+            if (field.value.trim().length > 0) {
+                field.value += ' ' + text;
+            } else {
+                field.value = text;
+            }
+        }
+
+        function generateCertificate(e) {
+            e.preventDefault();
+            playClickSound('success');
+
+            const name = document.getElementById('form-name').value;
+            const dept = document.getElementById('form-dept').value;
+            const caseText = document.getElementById('form-case').value;
+            const impact = document.getElementById('form-impact').value;
+            const days = document.getElementById('form-days').value;
+            const reflection1 = document.getElementById('form-reflection-1').value;
+            const reflection2 = document.getElementById('form-reflection-2').value;
+
+            const certBody = document.getElementById('certificate-body');
+            certBody.innerHTML = `
+                <div class="grid sm:grid-cols-2 gap-4 pb-3 border-b border-slate-800">
+                    <div>
+                        <span class="text-xs text-slate-500">ПІБ Кандидата:</span>
+                        <div class="font-bold text-white text-base">${name}</div>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-500">Підрозділ / Посада:</span>
+                        <div class="font-bold text-slate-200">${dept}</div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold block mb-1">1. Чому хоче дізнатися більше про SMED:</span>
+                        <p class="text-slate-300 italic bg-slate-950 p-3 rounded-lg border border-slate-800/80">«${reflection1}»</p>
+                    </div>
+
+                    <div>
+                        <span class="text-xs text-slate-500 font-semibold block mb-1">2. Чому саме повинен бути учасником навчання:</span>
+                        <p class="text-slate-300 italic bg-slate-950 p-3 rounded-lg border border-slate-800/80">«${reflection2}»</p>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5 pt-3 border-t border-slate-800">
+                    <div class="text-xs text-slate-300"><strong>• Практичний кейс:</strong> ${caseText}</div>
+                    <div class="text-xs text-slate-300"><strong>• Очікуваний ефект:</strong> ${impact}</div>
+                    <div class="text-xs text-slate-300"><strong>• Термін впровадження:</strong> ${days}</div>
+                </div>
+            `;
+
+            document.getElementById('certificate-result').classList.remove('hidden');
+            document.getElementById('certificate-result').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function copyCertificate() {
+            playClickSound('click');
+            const name = document.getElementById('form-name').value;
+            const dept = document.getElementById('form-dept').value;
+            const r1 = document.getElementById('form-reflection-1').value;
+            const r2 = document.getElementById('form-reflection-2').value;
+            const cCase = document.getElementById('form-case').value;
+            const cImpact = document.getElementById('form-impact').value;
+
+            const text = `ЗАЯВКА НА НАВЧАННЯ SMED\nКандидат: ${name} (${dept})\n\n1. ЧОМУ ХОЧЕ ДІЗНАТИСЯ БІЛЬШЕ ПРО SMED:\n${r1}\n\n2. ОБҐРУНТУВАННЯ УЧАСТІ У НАВЧАННІ:\n${r2}\n\nПРАКТИЧНИЙ КЕЙС: ${cCase}\nОЧІКУВАНИЙ ЕФЕКТ: ${cImpact}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Текст заявки скопійовано в буфер обміну!');
+            });
+        }
+
+        // Initialize App
+        window.onload = function() {
+            selectStep(2);
+            renderGameStage();
+        }
+    </script>
+</body>
+</html>
